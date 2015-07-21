@@ -1,0 +1,137 @@
+<!doctype html>
+<!-- <html ng-app="loginCounter">  
+ --><!-- instantiate our own app by passing the name of our app as the value in index.html file -->
+<html>
+<head>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script> -->
+<!-- <script src="js/main.js"></script> -->
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#login-button').click(function(e){
+		e.preventDefault();
+		var username = $('#user').val();
+		var password = $('#password').val();
+		// console.log(username);
+		$.ajax({
+			type: 'post',
+			url: 'http://carinaboowarmup.herokuapp.com/users/login',
+			data: JSON.stringify({user: username, password: password}),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function(data){
+				// console.log(data);
+				if (data.errCode == -1) {
+					$('.messege').html('Invalid username and/or password. Please try again.');
+				} else if (data.errCode == 1) {
+					$('#login-screen').hide();
+					$('#welcome-screen').show();
+					$('.name').html(username);
+					$('.times').html(data.count);
+				}
+			}
+		});
+	});
+	$('#add-button').click(function(e){
+		e.preventDefault();
+		var username = $('#user').val();
+		var password = $('#password').val();
+		// console.log(username);
+		$.ajax({
+			type: 'post',
+			url: 'http://carinaboowarmup.herokuapp.com/users/add',
+			data: JSON.stringify({user: username, password: password}),
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function(data){
+				if (data.errCode == -2){
+					$('.messege').html('This user name already exists. Please try again.');
+				} else if (data.errCode = -3){
+					$('.messege').html('The username cannot be empty or over 128 characters. Please try again.');
+				} else if (data.errCode = -4){
+					$('.messege').html('The password should be at most 128 characters long. Please try again');
+				}
+			}
+		});
+	});
+	$('#logout-button').click(function(e){
+		// e.preventDefault();
+		document.getElementById('user').value = '';
+		document.getElementById('password').value = '';
+		$('#login-screen').show();
+		$('#welcome-screen').hide();
+	});
+});
+</script>
+
+
+<style type="text/css">
+body {
+	background-color: #cfe7c8;
+}
+#login-screen, #welcome-screen {
+	margin: 25px;
+    width: 400px;
+    border: 25px;
+    padding: 20px;
+	border-radius: 10px;
+	background-image: url(http://www.psdgraphics.com/wp-content/uploads/2014/02/colorful-triangles.jpg);
+	opacity: 0.8;
+}
+p.messege, p.welcome-name, p.login-times {
+	font-family: Arial, Helvetica, sans-serif;
+	height: 35px;
+}
+button {
+	width: 80px;
+	padding: 10px;
+	margin: 7px;
+	border-radius: 10px;
+	border: #db91ce;
+	background-color: #dfeddb;
+}
+button:hover {
+	background-color: #edf1c9;
+}
+input {
+	border-radius: 5px;
+	margin: 5px;
+	height: 20px;
+	padding: 5px;
+	border: 4px;
+}
+input:hover{
+	background-color: #edf1c9;
+}
+</style>
+</head>
+
+<body>
+
+	<center>
+ 	<div id="login-screen">
+  		<p class="messege"> Please sign in or create a new user </p>
+  		<form>
+  			<input type="text" placeholder="username" id="user">
+  		</form>
+  		<form>
+  			<input type="password" placeholder="password" id="password">
+  		</form>
+  		<p></p>
+  		<button type="button" id="login-button">Login</button>
+  		<button type="button" id="add-button">Add</button>
+    </div>
+	</center>
+
+	<center>
+  	<div id="welcome-screen" style="display: none">
+  		<p class="welcome-name"> Welcome <span class="name"></span> </p>
+  		<p class="login-times"> You have logged in <span class="times"></span> times </p>
+  		<button type="button" id="logout-button">Logout</button>
+  	</div>
+  	</center>
+</body>
+</html>
